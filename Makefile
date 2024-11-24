@@ -4,25 +4,20 @@ CPP_FLAGS = -I ./lua-5.4.7/src
 LNK_FLAGS_LUA = -L ./lua-5.4.7/src -llua
 EXECUTABLE = demo
 
-#all: sandbox.o lua_wrapper.so
-#	$(CXX) *.o  -o $(EXECUTABLE) $(LNK_FLAGS_WRAPPER)
+all: lua-5.4.7 demo
 
-#sandbox.o: ./src/sandbox.cpp
-#	$(CXX) -c ./src/sandbox.cpp -o $(EXECUTABLE).o $(CXX_FLAGS)
-
-#lua_wrapper.so: lua_wrapper.o
-#	$(CXX) -shared -o libluawrapper.so lua_wrapper.o  (LNK_FLAGS_LUA)
-
-#lua_wrapper.o: ./src/lua_wrapper.cpp
-#	$(CXX) -fPIC -c ./src/lua_wrapper.cpp $(CXX_FLAGS) 
-
-all: demo
+lua-5.4.7:
+	wget https://www.lua.org/ftp/lua-5.4.7.tar.gz
+	tar xzvf lua-5.4.7.tar.gz
+	make -C lua-5.4.7
 
 demo:
 	$(CXX) demo.cpp -o demo $(CXX_FLAGS) $(LNK_FLAGS_LUA)
 
+.PHONY: clean
 clean:
 	rm -f *.o *.a *.so $(EXECUTABLE)
 
+.PHONY: dev
 dev:
 	while inotifywait demo.cpp ; do clear; make clean ; make ; ./demo ; done
